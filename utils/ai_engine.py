@@ -1,4 +1,4 @@
-import google-generativeai
+import google.generativeai as genai
 import json
 import re
 
@@ -42,8 +42,14 @@ Only return the JSON object — no markdown, no explanation outside the JSON.
 
 class AIEngine:
     def __init__(self, api_key: str, model: str, schema: dict):
-        self.client = openai.OpenAI(api_key=api_key)
-        self.model = model
+        genai.configure(api_key=api_key)
+        self.model = genai.GenerativeModel(
+            model_name=model,
+            generation_config=genai.GenerationConfig(
+                temperature=0.1,
+                max_output_tokens=1500,
+            ),
+        )
         self.schema = schema
 
     def _format_schema(self) -> str:
@@ -55,19 +61,10 @@ class AIEngine:
 
     def process_query(self, user_question: str) -> dict:
         schema_str = self._format_schema()
-        system = SYSTEM_PROMPT.format(schema=schema_str)
+        prompt = SYSTEM_PROMPT.format(schema=schema_str) + f"\n\nUser question: {user_question}"
 
-        response = self.client.chat.completions.create(
-            model=self.model,
-            messages=[
-                {"role": "system", "content": system},
-                {"role": "user", "content": user_question},
-            ],
-            temperature=0.1,
-            max_tokens=1500,
-        )
-
-        raw = response.choices[0].message.content.strip()
+        response = self.model.generate_content(prompt)
+        raw = response.text.strip()
 
         # Strip markdown fences if present
         raw = re.sub(r"^```(?:json)?\s*", "", raw)
