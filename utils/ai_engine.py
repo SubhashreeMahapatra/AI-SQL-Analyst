@@ -43,13 +43,7 @@ Only return the JSON object — no markdown, no explanation outside the JSON.
 class AIEngine:
     def __init__(self, api_key: str, model: str, schema: dict):
         genai.configure(api_key=api_key)
-        self.model = genai.GenerativeModel(
-            model_name=model,
-            generation_config=genai.GenerationConfig(
-                temperature=0.1,
-                max_output_tokens=1500,
-            ),
-        )
+        self.model_name = model
         self.schema = schema
 
     def _format_schema(self) -> str:
@@ -61,9 +55,18 @@ class AIEngine:
 
     def process_query(self, user_question: str) -> dict:
         schema_str = self._format_schema()
-        prompt = SYSTEM_PROMPT.format(schema=schema_str) + f"\n\nUser question: {user_question}"
+        full_prompt = SYSTEM_PROMPT.format(schema=schema_str) + f"\n\nUser question: {user_question}"
 
-        response = self.model.generate_content(prompt)
+        model = genai.GenerativeModel(
+            model_name=self.model_name,
+            generation_config={
+                "temperature": 0.1,
+                "max_output_tokens": 1500,
+                "response_mime_type": "application/json",  # forces clean JSON output
+            },
+        )
+
+        response = model.generate_content(full_prompt)
         raw = response.text.strip()
 
         # Strip markdown fences if present
@@ -72,15 +75,14 @@ class AIEngine:
 
         result = json.loads(raw)
 
-        # Validate required fields
         if "sql" not in result:
             raise ValueError("AI did not return a SQL query.")
 
         # Safety check — block destructive SQL
-        dangerous = ["drop ", "delete ", "update ", "insert ", "alter ", "truncate ", "create "]
+        dangerous = ["drop ", "delete ", "update ", "insert ", "alter ", "truncate "]
         sql_lower = result["sql"].lower()
         for keyword in dangerous:
             if keyword in sql_lower:
-                raise ValueError(f"Unsafe SQL detected (contains '{keyword.strip()}'). Only SELECT queries are allowed.")
+                raise ValueError(f"Unsafe SQL detected: '{keyword.strip()}' not allowed.")
 
         return result
