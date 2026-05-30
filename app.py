@@ -5,7 +5,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import sqlalchemy
 from sqlalchemy import create_engine, text, inspect
-import openai
+import google.generativeai as genai
 import os
 import json
 import re
@@ -37,8 +37,8 @@ if "db_schema" not in st.session_state:
     st.session_state.db_schema = None
 if "query_results" not in st.session_state:
     st.session_state.query_results = []
-if "openai_key_set" not in st.session_state:
-    st.session_state.openai_key_set = False
+if "gemini_key_set" not in st.session_state:
+    st.session_state.gemini_key_set = False
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
@@ -55,23 +55,23 @@ with st.sidebar:
     st.markdown("---")
 
     # ── API Key ──────────────────────────────────────────────────────────────
-    st.markdown("### 🔑 OpenAI Configuration")
+    st.markdown("### 🔑 Gemini Configuration")
     api_key_input = st.text_input(
         "API Key",
         type="password",
-        placeholder="sk-...",
-        value=os.getenv("OPENAI_API_KEY", ""),
-        help="Enter your OpenAI API key. It's never stored."
+        placeholder="AIza...",
+        value=os.getenv("GEMINI_API_KEY", ""),
+        help="Free key from aistudio.google.com. Never stored."
     )
     model_choice = st.selectbox(
         "Model",
-        ["gpt-4o", "gpt-4o-mini", "gpt-4-turbo"],
+        ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-2.0-flash"],
         index=0
     )
     if api_key_input:
-        st.session_state.openai_api_key = api_key_input
-        st.session_state.openai_model = model_choice
-        st.session_state.openai_key_set = True
+        st.session_state.gemini_api_key = api_key_input
+        st.session_state.gemini_model = model_choice
+        st.session_state.gemini_key_set = True
         st.success("✅ API key configured")
 
     st.markdown("---")
@@ -150,7 +150,7 @@ with col1:
     db_status = "🟢 Connected" if st.session_state.db_engine else "🔴 No Database"
     st.markdown(f"<div class='stat-card'><div class='stat-label'>Database</div><div class='stat-value'>{db_status}</div></div>", unsafe_allow_html=True)
 with col2:
-    ai_status = "🟢 Ready" if st.session_state.openai_key_set else "🔴 No API Key"
+    ai_status = "🟢 Ready" if st.session_state.gemini_key_set else "🔴 No API Key"
     st.markdown(f"<div class='stat-card'><div class='stat-label'>AI Engine</div><div class='stat-value'>{ai_status}</div></div>", unsafe_allow_html=True)
 with col3:
     n_tables = len(st.session_state.db_schema) if st.session_state.db_schema else 0
@@ -236,16 +236,16 @@ with st.form(key="query_form", clear_on_submit=True):
 
 # ── Process Query ─────────────────────────────────────────────────────────────
 if submitted and user_input:
-    if not st.session_state.openai_key_set:
-        st.error("⚠️ Please enter your OpenAI API key in the sidebar.")
+    if not st.session_state.gemini_key_set:
+        st.error("⚠️ Please enter your Gemini API key in the sidebar. Get one free at aistudio.google.com")
     elif not st.session_state.db_engine:
         st.error("⚠️ Please connect to a database first (or load the Demo DB).")
     else:
         with st.spinner("🧠 Thinking..."):
             try:
                 ai = AIEngine(
-                    api_key=st.session_state.openai_api_key,
-                    model=st.session_state.openai_model,
+                    api_key=st.session_state.gemini_api_key,
+                    model=st.session_state.gemini_model,
                     schema=st.session_state.db_schema
                 )
                 result = ai.process_query(user_input)
@@ -285,6 +285,6 @@ if st.session_state.chat_history:
 # ── Footer ────────────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="footer">
-    Built with Streamlit · OpenAI GPT-4o · SQLAlchemy · Plotly
+    Built with Streamlit · Google Gemini · SQLAlchemy · Plotly
 </div>
 """, unsafe_allow_html=True)
