@@ -4,7 +4,7 @@
 
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://your-app.streamlit.app)
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://python.org)
-[![OpenAI GPT-4o](https://img.shields.io/badge/AI-GPT--4o-green.svg)](https://openai.com)
+[![Google Gemini](https://img.shields.io/badge/AI-GPT--4o-green.svg)](https://openai.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
@@ -24,7 +24,7 @@ AI:    SELECT category_name, strftime('%Y-%m', order_date) AS month,
        ORDER BY month
    ↓
 Chart: Multi-line time series, one line per category
-```
+
 
 ---
 
@@ -47,7 +47,7 @@ Chart: Multi-line time series, one line per category
 
 ```
 Frontend:     Streamlit
-AI Engine:    OpenAI GPT-4o (via API)
+AI Engine:    Google Gemini (via API)
 Database ORM: SQLAlchemy
 Visualization: Plotly
 Data:         Pandas + NumPy
@@ -73,7 +73,7 @@ pip install -r requirements.txt
 
 ```bash
 cp .env.example .env
-# Edit .env and add your OpenAI API key
+# Edit .env and add your Gemini API key
 ```
 
 `.env`:
@@ -99,14 +99,14 @@ Open [http://localhost:8501](http://localhost:8501)
 2. **Go to** [share.streamlit.io](https://share.streamlit.io) and connect your repo
 
 3. **Set secrets** in the Streamlit Cloud dashboard:
-   ```
+
    App → Settings → Secrets
-   ```
+   
    Add:
    ```toml
-   OPENAI_API_KEY = "sk-your-key-here"
+   GEMINI_API_KEY = "AIza-your-key-here"
    DATABASE_URL = "postgresql://..."   # optional
-   ```
+   
 
 4. **Deploy** — your app will be live at `https://your-app-name.streamlit.app`
 
@@ -115,24 +115,24 @@ Open [http://localhost:8501](http://localhost:8501)
 ## 🗄️ Connecting Your Database
 
 ### PostgreSQL
-```
+
 postgresql://username:password@hostname:5432/database_name
-```
+
 
 ### MySQL
-```
+
 mysql+pymysql://username:password@hostname:3306/database_name
-```
+
 
 ### SQLite (local file)
-```
+
 sqlite:///./path/to/your/database.db
-```
+
 
 ### Supabase (PostgreSQL)
-```
+
 postgresql://postgres:[YOUR-PASSWORD]@db.xxxx.supabase.co:5432/postgres
-```
+
 
 ---
 
@@ -161,7 +161,7 @@ ai-sql-analyst/
 ├── .gitignore
 │
 ├── utils/
-│   ├── ai_engine.py          # OpenAI GPT-4o integration
+│   ├── ai_engine.py          # Google Gemini integration
 │   ├── db_manager.py         # SQLAlchemy DB connection + query execution
 │   ├── chart_builder.py      # Auto chart selection + Plotly rendering
 │   └── sample_data.py        # Demo e-commerce DB generator
@@ -172,9 +172,7 @@ ai-sql-analyst/
 └── .streamlit/
     ├── config.toml           # Streamlit theme configuration
     └── secrets.toml.example  # Production secrets template
-```
 
----
 
 ## 🔐 Security
 
@@ -193,16 +191,9 @@ Pull requests welcome! For major changes, open an issue first.
 # Fork → Clone → Create branch
 git checkout -b feature/my-feature
 # Make changes → Test → PR
-```
 
----
-
-## 📄 License
-
-MIT © 2024
-
----
 
 ## 🌟 Show Your Support
 
 If this project helped you, give it a ⭐ on GitHub!
+
