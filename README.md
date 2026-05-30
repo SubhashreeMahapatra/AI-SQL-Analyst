@@ -24,7 +24,7 @@ AI:    SELECT category_name, strftime('%Y-%m', order_date) AS month,
        ORDER BY month
    ↓
 Chart: Multi-line time series, one line per category
-
+```
 
 ---
 
@@ -99,14 +99,14 @@ Open [http://localhost:8501](http://localhost:8501)
 2. **Go to** [share.streamlit.io](https://share.streamlit.io) and connect your repo
 
 3. **Set secrets** in the Streamlit Cloud dashboard:
-
+   ```
    App → Settings → Secrets
-   
+   ```
    Add:
    ```toml
    GEMINI_API_KEY = "AIza-your-key-here"
    DATABASE_URL = "postgresql://..."   # optional
-   
+   ```
 
 4. **Deploy** — your app will be live at `https://your-app-name.streamlit.app`
 
@@ -115,24 +115,24 @@ Open [http://localhost:8501](http://localhost:8501)
 ## 🗄️ Connecting Your Database
 
 ### PostgreSQL
-
+```
 postgresql://username:password@hostname:5432/database_name
-
+```
 
 ### MySQL
-
+```
 mysql+pymysql://username:password@hostname:3306/database_name
-
+```
 
 ### SQLite (local file)
-
+```
 sqlite:///./path/to/your/database.db
-
+```
 
 ### Supabase (PostgreSQL)
-
+```
 postgresql://postgres:[YOUR-PASSWORD]@db.xxxx.supabase.co:5432/postgres
-
+```
 
 ---
 
@@ -172,7 +172,9 @@ ai-sql-analyst/
 └── .streamlit/
     ├── config.toml           # Streamlit theme configuration
     └── secrets.toml.example  # Production secrets template
+```
 
+---
 
 ## 🔐 Security
 
@@ -193,7 +195,16 @@ git checkout -b feature/my-feature
 # Make changes → Test → PR
 ```
 
+---
+
+## 📄 License
+
+MIT © 2024
+
+---
+
 ## 🌟 Show Your Support
 
 If this project helped you, give it a ⭐ on GitHub!
+
 
