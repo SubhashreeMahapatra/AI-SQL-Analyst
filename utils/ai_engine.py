@@ -1,4 +1,5 @@
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 import json
 import re
 
@@ -19,7 +20,7 @@ Rules:
 - Never use DROP, DELETE, UPDATE, INSERT, or any destructive SQL
 - Always alias aggregated columns clearly (e.g. AS total_revenue)
 
-Return your response as a JSON object with these exact fields:
+Return ONLY a valid JSON object with these exact fields, no markdown, no extra text:
 {{
   "sql": "SELECT ...",
   "explanation": "This query...",
@@ -35,14 +36,12 @@ Chart type guide:
 - area: cumulative trends
 - heatmap: two-dimensional comparisons
 - table: detailed records, text-heavy data
-
-Only return the JSON object — no markdown, no explanation outside the JSON.
 """
 
 
 class AIEngine:
     def __init__(self, api_key: str, model: str, schema: dict):
-        genai.configure(api_key=api_key)
+        self.client = genai.Client(api_key=api_key)
         self.model_name = model
         self.schema = schema
 
@@ -55,21 +54,24 @@ class AIEngine:
 
     def process_query(self, user_question: str) -> dict:
         schema_str = self._format_schema()
-        full_prompt = SYSTEM_PROMPT.format(schema=schema_str) + f"\n\nUser question: {user_question}"
-
-        model = genai.GenerativeModel(
-            model_name=self.model_name,
-            generation_config={
-                "temperature": 0.1,
-                "max_output_tokens": 1500,
-                "response_mime_type": "application/json",  # forces clean JSON output
-            },
+        full_prompt = (
+            SYSTEM_PROMPT.format(schema=schema_str)
+            + f"\n\nUser question: {user_question}"
         )
 
-        response = model.generate_content(full_prompt)
+        response = self.client.models.generate_content(
+            model=self.model_name,
+            contents=full_prompt,
+            config=types.GenerateContentConfig(
+                temperature=0.1,
+                max_output_tokens=1500,
+                response_mime_type="application/json",
+            ),
+        )
+
         raw = response.text.strip()
 
-        # Strip markdown fences if present
+        # Strip markdown fences if somehow present
         raw = re.sub(r"^```(?:json)?\s*", "", raw)
         raw = re.sub(r"\s*```$", "", raw)
 
@@ -83,6 +85,6 @@ class AIEngine:
         sql_lower = result["sql"].lower()
         for keyword in dangerous:
             if keyword in sql_lower:
-                raise ValueError(f"Unsafe SQL detected: '{keyword.strip()}' not allowed.")
+                raise ValueError(f"Unsafe SQL blocked: '{keyword.strip()}'")
 
         return result
