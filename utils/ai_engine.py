@@ -1,4 +1,4 @@
-import openai
+import google-generativeai
 import json
 import re
 
