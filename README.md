@@ -191,7 +191,7 @@ Pull requests welcome! For major changes, open an issue first.
 # Fork → Clone → Create branch
 git checkout -b feature/my-feature
 # Make changes → Test → PR
-
+```
 
 ## 🌟 Show Your Support
 
