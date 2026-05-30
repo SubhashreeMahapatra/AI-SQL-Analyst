@@ -5,7 +5,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import sqlalchemy
 from sqlalchemy import create_engine, text, inspect
-import google.generativeai as genai
+from google import genai
 import os
 import json
 import re
@@ -65,7 +65,7 @@ with st.sidebar:
     )
     model_choice = st.selectbox(
         "Model",
-        ["gemini-2.0-flash", "gemini-1.5-flash-latest", "gemini-1.5-pro-latest"],
+        ["gemini-2.0-flash", "gemini-2.0-flash-lite", "gemini-1.5-flash"],
         index=0
     )
     if api_key_input:
@@ -288,4 +288,5 @@ st.markdown("""
     Built with Streamlit · Google Gemini · SQLAlchemy · Plotly
 </div>
 """, unsafe_allow_html=True)
+
 
