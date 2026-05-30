@@ -65,7 +65,7 @@ with st.sidebar:
     )
     model_choice = st.selectbox(
         "Model",
-        ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-2.0-flash"],
+        ["gemini-2.0-flash", "gemini-1.5-flash-latest", "gemini-1.5-pro-latest"],
         index=0
     )
     if api_key_input:
@@ -288,3 +288,4 @@ st.markdown("""
     Built with Streamlit · Google Gemini · SQLAlchemy · Plotly
 </div>
 """, unsafe_allow_html=True)
+
