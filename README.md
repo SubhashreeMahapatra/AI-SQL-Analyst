@@ -32,7 +32,7 @@ Chart: Multi-line time series, one line per category
 
 | Feature | Description |
 |---|---|
-| **Natural Language → SQL** | GPT-4o converts plain English to optimized SQL |
+| **Natural Language → SQL** | Gemini converts plain English to optimized SQL |
 | **Auto Visualization** | Automatically picks the best chart type (line, bar, pie, scatter, heatmap) |
 | **Schema Awareness** | AI reads your full schema before generating queries |
 | **Multi-DB Support** | PostgreSQL, MySQL, SQLite, and any SQLAlchemy-compatible DB |
